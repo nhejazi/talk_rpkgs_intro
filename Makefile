@@ -1,7 +1,6 @@
 TITLE = rpkgs_intro
 
-.PHONY : all
-all: deck web clean
+.PHONY : deck
 
 deck:
 	Rscript -e "rmarkdown::render('$(TITLE).Rmd')"
@@ -12,3 +11,5 @@ web:
 
 clean:
 	rm *.html
+
+all: deck web clean
