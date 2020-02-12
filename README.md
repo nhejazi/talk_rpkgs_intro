@@ -7,7 +7,7 @@
 ---
 
 This repo contains source materials for the tutorial. For the final slide deck,
-see [here]().
+see [here](https://statistics.berkeley.edu/~nhejazi/present/2020_rpkgs_intro/rpkgs_intro.html).
 
 ---
 
