@@ -1,6 +1,6 @@
 ---
 title: "Building R Packages"
-subtitle: "Best Practices and First Mistakes"
+subtitle: "'Good Enough' Practices for Applied Statistics"
 author: "[Nima Hejazi](https://nimahejazi.org)"
 institute: "UC Berkeley"
 date: "2020-02-12 (updated: `r Sys.Date()`)"
@@ -14,104 +14,46 @@ output:
       countIncrementalSlides: false
 ---
 
-# Statistics and Science
-
-...
-
-- The [remark.js](https://remarkjs.com) library;
-
-- The **xaringan** package;
-
-...
-
----
-
-# remark.js
-
-...
-
-- create a new slide (Markdown syntax<sup>*</sup> and slide properties);
-
-- format a slide (e.g. text alignment);
-
-- configure the slideshow;
-
-- and use the presentation (keyboard shortcuts).
-
-...
-
----
 class: inverse, middle, center
 
 # Science x Software x Statistics
 
 ---
 
-# Statistical Software Promotes Scientific Reproducibility
+# Robust Statistical Software for Science
 
 "The origins of the scientific method...amount to insistence on direct
 evidence. This is reflected in the motto of The Royal Society, founded in 1660:
-_Nullius in verba_, which roughly means 'take nobody's word for it'." --Philip
+_Nullius in verba_, which roughly means 'take nobody's word for it'." -Philip
 B. Stark, in _The Practice of Reproducible Research_
 
-- _Show me_, not _trust me_ -- robust, well documented, rigorously tested
-  software allows others to directly assess our claims.
+- The scientific paradigm is _show me, not trust me_: we need robust,
+  well-documented, rigorously tested code to ensure validity, reproducibility,
+  reusability.
 
-- The software we distribute allows others to engage with our analysis of the
-  data set of interest and to apply our method to similar use cases.
+- The software we distribute allows others to engage with our analysis of a
+  data set or engage in testing a (newly) proposed methodology.
+  - How are conclusions from data analysis to be believed if the code that
+    underlies them cannot be closely scrutinized?
+  - Methodological developments are slow in their uptake: easy-to-use software
+    aids this process.
 
 ---
 
-# What's wrong with that code I wrote that one time?
+# The code I wrote that one time...
 
 "An article...in a scientific publication is not the scholarship itself, it is
 merely advertising of the scholarship. The actual scholarship is the complete
 software development environment and the complete set of instructions which
-generated the figures." --David Donoho, on _WaveLab_
+generated the figures." -David Donoho, _WaveLab_
 
-Reproducible applied statistics _requires robust software_:
-- Clear, easily acessible documentation, including examples.
-- Unit testing to rigorously assess functions, classes, etc.
-- Continuous integration, ensuring accessibility across systems and
-  constant monitoring of software quality.
-- Open source development, embodying an ongoing, continuous, public
-  peer review of the software product.
-
----
-
-# columns
-
-Some differences between using remark.js (left) and using **xaringan** (right):
-
-.pull-left[
-1. Start with a boilerplate HTML file;
-
-1. Plain Markdown;
-
-1. Write JavaScript to autoplay slides;
-
-1. Manually configure MathJax;
-
-1. Highlight code with `*`;
-
-1. Edit Markdown source and refresh browser to see updated slides;
-]
-
-.pull-right[
-1. Start with an R Markdown document;
-
-1. R Markdown (can embed R/other code chunks);
-
-1. Provide an option `autoplay`;
-
-1. MathJax just works;<sup>*</sup>
-
-1. Highlight code with `{{}}`;
-
-1. The RStudio addin "Infinite Moon Reader" automatically refreshes slides on changes;
-]
-
-.footnote[[*] Not really. See next page.]
+Reproducible applied statistics _requires_ robust software:
+- Clear, easily accessible documentation, including examples.
+- Unit testing to rigorously assess functions, classes, and other constructs.
+- Continuous integration, ensuring accessibility across operating systems and
+  constant-time monitoring of software quality.
+- Open source development, which embodies an ongoing, continuous, public peer
+  review of the (academic) software product.
 
 ---
 
@@ -123,262 +65,314 @@ the work he had done), he had the occasion to apply the methods of the article
 on a newly-arrived dataset. When he went back to the old software library to
 try and do it, he couldn't remember how the software worked -- invocation
 sequences, data structures, etc. In the end, he abandoned the project, saying
-he just didn't have time to get in to it anymore." --from _WaveLab_
+he just didn't have time to get in to it anymore." -excerpted from _WaveLab_
+
+- Old scripts (if they can even be found) can be difficult to adapt to new
+  projects.
+  - Most often, old code is hard to find or lost completely.
+  - If found, time and effort is then wasted in adapting old scripts to a new
+    purpose.
+  - More commonly, one remembers the procedure but then has to write customized
+    variants of the old code from scratch.
+- By abstracting expected inputs and procedures, packages allow for code to more
+  easily be reused or adapted.
+  - Of course, the package must be documented well in order to ensure that its
+    use is straightforward.
+  - ...and rigorously tested; otherwise, incorrect code might end up being used
+    across many analyses.
 
 ---
 
-# R Code
+# Why write an R package?
+
+- To distribute R code and documentation
+- To keep track of the misc. R functions you write and reuse
+- To distribute data and software accompanying a paper
+
+---
+
+# "Good enough" practices for R packages
+
+1. Version control (e.g., via `git`)
+   - Use _formal version control_ to keep track of package development.
+   - Version numbers of R packages alone are not enough to track changes.
+   - Use git/GitHub to facilitate collaboration and engage in open source work.
+2. Minimal package anatomy and documentation
+   - R packages have have a particular directory structure and metadata format.
+   - Documentation can be included in plain text files via
+     [`Roxygen`](https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html)
+3. Unit testing (e.g., via the `testthat` suite)
+   - To ensure that functions/classes work as expected, use static unit tests.
+   - Tests should focus be _atomic_, focusing on a few lines of code.
+4. Automated checking via continuous integration
+   - Packages must be easily accessible across common operating systems.
+   - Ensure that unit tests are re-run _every time_ that code is changed.
+
+---
+class: inverse, middle, center
+
+# Git: the bare necessities
+
+---
+
+# Why Git
+
+## Why version control?
+
+- Keep a history of changes that can be easily parsed.
+- Be able to go back and forth in the project history.
+- No need to worry about breaking things that are working.
+- Collaboration: merge changes from multiple people.
+
+--
+
+## A brief history
+
+- Formal version control system pioneered by Linus Torvalds in 2005.
+- Designed to manage the source code for the Linux kernel.
+- Tracks any content, but best used with plain text files.
+
+--
+
+## Git
+
+- It's free, open source, and fast.
+- Distributed: You don't need access to a server.
+- Greatly simplifies the merging of simultaneous changes.
+
+---
+
+# Basic usage
+
+## Essential commands
+
+- Initialize a repository: `git init`
+- Create and/or change some files
+- See what you’ve changed: `git status`, `git diff`, `git log`
+- Indicate what changes to save: `git add`
+- Commit to those changes: `git commit`
+- Push the changes to GitHub: `git push`
+- Pull changes from collaborators: `git pull`
+- Note: `.gitignore` file allows extraneous files to be ignored.
+
+--
+
+## Learning more
+
+- [Version Control with Git (Software Carpentry)](http://swcarpentry.github.io/git-novice/)
+- [_Happy Git with R_ (Jenny Bryan)](https://happygitwithr.com/)
+- [Tools for Reproducible Research (Karl Broman)](https://kbroman.org/Tools4RR/)
+- [Introduction to Git (Berkeley's STAT 159/259)](http://www.jarrodmillman.com/rcsds/standard/git-intro.html)
+
+---
+class: inverse, middle, center
+
+# Anatomy of an R package
+
+---
+
+# Anatomy
+
+```{bash eval=FALSE}
+ph292rtools/
+
+  DESCRIPTION
+  NAMESPACE
+  .Rbuildignore
+
+  R/trimmed_mean.R
+  R/plots.R
+  R/utils.R
+
+  man/trimmed_mean.Rd
+  man/plotting.Rd
+  man/utils.Rd
+
+  tests/testthat.R
+  tests/testthat/test-trimmed_mean.R
+
+  vignettes/intro_ph292rtools.Rmd
+```
+
+- Meta-data stored in the `DESCRIPTION` file.
+- Documentation files (`NAMESPACE`, `*.Rd`) auto-generated by
+  `devtools::document()`
+- `.Rbuildignore` specifies files not relevant to the package (e.g., `.git`).
+
+---
+
+# R files
+
+- Use the `R` directory to store `.R` source files.
+
+--
+
+- Organize functions across multiple files.
+  - Not a single file containing all functions.
+  - But not necessary to have all functions in single files.
+- Give meaningful names to each file, e.g., `plotting.R` not `utils.R`
+
+--
+
+- Follow code styling practices based on some style guide.
+  - Google's: https://google.github.io/styleguide/Rguide.html
+  - Tidyverse: https://style.tidyverse.org/
+  - Use the [`lintr` package](https://CRAN.R-project.org/package=lintr) to warn
+    about style issues.
+  - Use the [`styler`](https://CRAN.R-project.org/package=styler) package to
+    enforce a particular style.
+
+--
+
+- Use spaces, specify arguments by name, fully write out logicals:
+  - `median(x = x, na.rm = FALSE)`, not `median(x)` or `median(x, na.rm=F)`
+- Respect the 80-column rule (80 characters per line).
+- Also, use spaces, not tabs...really, please don't.
+
+---
+
+# Metadata
+
+- The `DESCRIPTION` file:
+```{bash eval=FALSE}
+Package: ph292rtools
+Title: The R Toolbox of Public Health 292 at UC Berkeley
+Version: 0.0.1
+Authors@R: person("Nima", "Hejazi", email = "nh@nimahejazi.org",
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-7127-2789"))
+Description:
+Maintainer: Nima Hejazi <nh@nimahejazi.org>
+Depends:
+Imports:
+Suggests:
+License: MIT + file LICENSE
+URL: https://github.com/nhejazi/ph292rtools
+BugReports: https://github.com/nhejazi/ph292rtools/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
+```
+
+- Auxiliary files: `.Rbuildignore`, `cran-comments.md`, `NEWS.md`, `LICENSE`
+- The `LICENSE` file can be included but must be `.Rbuildignore`'d.
+
+---
+
+# Documentation with Roxygen
+
+- The [`roxygen2` package](https://CRAN.R-project.org/package=roxygen2) makes
+  writing documentation much easier.
 
 ```{r comment='#'}
-# a boring regression
-fit = lm(dist ~ 1 + speed, data = cars)
-coef(summary(fit))
-dojutsu = c('地爆天星', '天照', '加具土命', '神威', '須佐能乎', '無限月読')
-grep('天', dojutsu, value = TRUE)
-```
-
----
-
-# R Plots
-
-```{r cars, fig.height=4, dev='svg'}
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = 'darkgray', las = 1)
-abline(fit, lwd = 2)
-```
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r}
-knitr::kable(head(iris), format = 'html')
-```
-
----
-
-# HTML Widgets
-
-I have not thoroughly tested HTML widgets against **xaringan**. Some may work well, and some may not. It is a little tricky.
-
-Similarly, the Shiny mode (`runtime: shiny`) does not work. I might get these issues fixed in the future, but these are not of high priority to me. I never turn my presentation into a Shiny app. When I need to demonstrate more complicated examples, I just launch them separately. It is convenient to share slides with other people when they are plain HTML/JS applications.
-
-See the next page for two HTML widgets.
-
----
-
-```{r out.width='100%', fig.height=6, eval=require('leaflet')}
-library(leaflet)
-leaflet() %>% addTiles() %>% setView(-93.65, 42.0285, zoom = 17)
-```
-
----
-
-```{r eval=require('DT'), tidy=FALSE}
-DT::datatable(
-  head(iris, 10),
-  fillContainer = FALSE, options = list(pageLength = 8)
-)
-```
-
----
-
-# Some Tips
-
-- When you use the "Infinite Moon Reader" addin in RStudio, your R session will be blocked by default. You can click the red button on the right of the console to stop serving the slides, or use the _daemonized_ mode so that it does not block your R session. To do the latter, you can set the option
-
-    ```r
-    options(servr.daemon = TRUE)
-    ```
-    
-    in your current R session, or in `~/.Rprofile` so that it is applied to all future R sessions. I do the latter by myself.
-    
-    To know more about the web server, see the [**servr**](https://github.com/yihui/servr) package.
-
---
-
-- Do not forget to try the `yolo` option of `xaringan::moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        yolo: true
-    ```
-
----
-
-# Some Tips
-
-- Slides can be automatically played if you set the `autoplay` option under `nature`, e.g. go to the next slide every 30 seconds in a lightning talk:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          autoplay: 30000
-    ```
-
---
-
-- A countdown timer can be added to every page of the slides using the `countdown` option under `nature`, e.g. if you want to spend one minute on every page when you give the talk, you can set:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          countdown: 60000
-    ```
-
-    Then you will see a timer counting down from `01:00`, to `00:59`, `00:58`, ... When the time is out, the timer will continue but the time turns red.
-    
----
-
-# Some Tips
-
-- The title slide is created automatically by **xaringan**, but it is just another remark.js slide added before your other slides.
-
-    The title slide is set to `class: center, middle, inverse, title-slide` by default. You can change the classes applied to the title slide with the `titleSlideClass` option of `nature` (`title-slide` is always applied).
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          titleSlideClass: [top, left, inverse]
-    ```
-    
---
-
-- If you'd like to create your own title slide, disable **xaringan**'s title slide with the `seal = FALSE` option of `moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        seal: false
-    ```
-
----
-
-# Some Tips
-
-- There are several ways to build incremental slides. See [this presentation](https://slides.yihui.org/xaringan/incremental.html) for examples.
-
-- The option `highlightLines: true` of `nature` will highlight code lines that start with `*`, or are wrapped in `{{ }}`, or have trailing comments `#<<`;
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          highlightLines: true
-    ```
-
-    See examples on the next page.
-
----
-
-# Some Tips
-
-
-.pull-left[
-An example using a leading `*`:
-
-    ```r
-    if (TRUE) {
-    ** message("Very important!")
-    }
-    ```
-Output:
-```r
-if (TRUE) {
-* message("Very important!")
+#' @title Trimmed mean
+#' @description Compute a truncated/trimmed mean that ignores some subset of
+#'  observations based on where they fall in the empirical distribution.
+#'
+#' @param x A \code{numeric} vector of observations over which the trimmed mean
+#'  is to be computed.
+#' @param prop A \code{numeric} scalar indicating proportion of observations
+#'  to be ignored in the trimming process.
+#' @param direction A \code{character} indicating the direction in which the
+#'  trimming operation is to be done.
+#'
+#' @export
+trimmed_mean <- function(x, prop, direction) {
+  # we'll fill this in later
 }
 ```
 
-This is invalid R code, so it is a plain fenced code block that is not executed.
-]
-
-.pull-right[
-An example using `{{}}`:
-
-````
-`r ''````{r tidy=FALSE}
-if (TRUE) {
-*{{ message("Very important!") }}
-}
-```
-````
-Output:
-```{r tidy=FALSE}
-if (TRUE) {
-{{ message("Very important!") }}
-}
-```
-
-It is valid R code so you can run it. Note that `{{}}` can wrap an R expression of multiple lines.
-]
+- `@title` and `@description` give information about the function.
+- `@param` specifies descriptions of the arguments of the function.
+- `@export` says that the function is not meant to be internal (more later).
 
 ---
 
-# Some Tips
+# Unit tests and test files
 
-An example of using the trailing comment `#<<` to highlight lines:
-
-````markdown
-`r ''````{r tidy=FALSE}
-library(ggplot2)
-ggplot(mtcars) +
-  aes(mpg, disp) +
-  geom_point() +   #<<
-  geom_smooth()    #<<
-```
-````
-
-Output:
-
-```{r tidy=FALSE, eval=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #<<
-  geom_smooth()    #<<
+- These are generally kept under the `tests` subdirectory.
+- The [`testthat` package]() is a popular framework for unit testing.
+  - In this case, a file `tests/testthat.R` runs all the unit tests.
+  - Individual unit tests are kept in `tests/testthat/example_test.R`
+- A simple unit test:
+```{r comment='#'}
+library(testthat)
+context("Testing a core function")
+set.seed(175298)
+test_that("What does this test do", {
+  # contents of test, use the expect_*() family of functions
+})
 ```
 
 ---
 
-# Some Tips
+# Vignettes and static documentation
 
-When you enable line-highlighting, you can also use the chunk option `highlight.output` to highlight specific lines of the text output from a code chunk. For example, `highlight.output = TRUE` means highlighting all lines, and `highlight.output = c(1, 3)` means highlighting the first and third line.
-
-````md
-`r ''````{r, highlight.output=c(1, 3)}
-head(iris)
-```
-````
-
-```{r, highlight.output=c(1, 3), echo=FALSE}
-head(iris)
-```
-
-Question: what does `highlight.output = c(TRUE, FALSE)` mean? (Hint: think about R's recycling of vectors)
+- Vignettes are stored under the `vignettes` subdirectory.
+  - These are most easily written in `.Rmd` files that combine code examples
+    with explanations of package functionality.
+  - These are a great resource for providing long-form documentation of the
+    functionality of your package.
+- The `pkgdown` package provides utilities to generate reference websites.
+  - This process directly uses the `roxygen2`-style documentation.
+  - It's simple to do, requiring only a call to `pkgdown::build_site()`.
+- Check out: https://pkgdown.r-lib.org/ for its documetation.
+- The websites can easily be customized via `_pkgdown.yml`.
 
 ---
 
-# Some Tips
+# My friend Travis
 
-- To make slides work offline, you need to download a copy of remark.js in advance, because **xaringan** uses the online version by default (see the help page `?xaringan::moon_reader`).
+- Continuous integration services are designed to ensure that software can be
+  built and tested with each incremental change.
+- Travis-CI is one of several popular continuous integration services.
+  - Others include AppVeyor and CircleCI.
+  - Travis allows free builds on Linux systems.
+  - AppVeyor allows free builds on Windows systems.
+- For R packages, a standard practice is to set up builds on both Travis-CI and
+  Appveyor, allowing Linux and Windows builds to be continuously monitored.
+  - Travis-CI builds are customized through `.travis.yml`.
+  - AppVeyor builds are customized through `appveyor.yml`.
+- The checking process runs `R CMD Check`, which includes unit testing, on a
+  freshly provisioned system.
+- On both services, caching is helpful to avoid very long build/check times.
 
-- You can use `xaringan::summon_remark()` to download the latest or a specified version of remark.js. By default, it is downloaded to `libs/remark-latest.min.js`.
+---
 
-- Then change the `chakra` option in YAML to point to this file, e.g.
+# Let's roll our own
 
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        chakra: libs/remark-latest.min.js
-    ```
+- Use the [`usethis` package](https://usethis.r-lib.org/) for easy package
+  setup.
 
-- If you used Google fonts in slides (the default theme uses _Yanone Kaffeesatz_, _Droid Serif_, and _Source Code Pro_), they won't work offline unless you download or install them locally. The Heroku app [google-webfonts-helper](https://google-webfonts-helper.herokuapp.com/fonts) can help you download fonts and generate the necessary CSS.
+```{r comment='#', eval=FALSE}
+library(here)
+library(usethis)
+
+# create package and change path
+create_package(here("ph292rtools"))
+proj_activate(here("ph292rtools"))
+
+# add license, readme, news, tests
+use_mit_license("My Name")
+use_readme_md()
+use_test("my-test")
+```
+
+- Let's browse https://usethis.r-lib.org/reference/index.html
+- For more, consider Hadley's book _R packages_: http://r-pkgs.had.co.nz/
+- Bioconductor guidelines: https://www.bioconductor.org/developers/package-guidelines/
+
+---
+
+# Summary
+
+- R packages really aren't that hard.
+- R packages are really useful.
+  - Distributing software and data
+  - Organizing code for a paper
+  - Organizing your misc. R functions
+- Look at others' packages, and learn from them.
+- Adopt the tools in the devtools and usethis packages
 
 ---
 class: center, middle
