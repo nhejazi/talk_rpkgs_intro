@@ -310,7 +310,8 @@ trimmed_mean <- function(x, prop, direction) {
 
 ## Organizing tests
 
-- The [`testthat` package]() is a popular framework for unit testing.
+- The [`testthat` package](https://testthat.r-lib.org/) is a popular framework
+  for unit testing.
   - In this case, a file `tests/testthat.R` runs all the unit tests.
   - Individual unit tests are kept in `tests/testthat/example_test.R`
 
