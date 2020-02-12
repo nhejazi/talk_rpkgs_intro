@@ -47,13 +47,20 @@ merely advertising of the scholarship. The actual scholarship is the complete
 software development environment and the complete set of instructions which
 generated the figures." -David Donoho, _WaveLab_
 
-Reproducible applied statistics _requires_ robust software:
+## We want software for reproducible applied statistics
+
 - Clear, easily accessible documentation, including examples.
 - Unit testing to rigorously assess functions, classes, and other constructs.
 - Continuous integration, ensuring accessibility across operating systems and
   constant-time monitoring of software quality.
 - Open source development, which embodies an ongoing, continuous, public peer
   review of the (academic) software product.
+
+## Why write an R package?
+
+- To distribute R code and documentation
+- To keep track of the misc. R functions you write and reuse
+- To distribute data and software accompanying a paper
 
 ---
 
@@ -80,14 +87,6 @@ he just didn't have time to get in to it anymore." -excerpted from _WaveLab_
     use is straightforward.
   - ...and rigorously tested; otherwise, incorrect code might end up being used
     across many analyses.
-
----
-
-# Why write an R package?
-
-- To distribute R code and documentation
-- To keep track of the misc. R functions you write and reuse
-- To distribute data and software accompanying a paper
 
 ---
 
@@ -254,6 +253,8 @@ LazyData: true
 RoxygenNote: 7.0.2
 ```
 
+--
+
 - Auxiliary files: `.Rbuildignore`, `cran-comments.md`, `NEWS.md`, `LICENSE`
 - The `LICENSE` file can be included but must be `.Rbuildignore`'d.
 
@@ -282,27 +283,45 @@ trimmed_mean <- function(x, prop, direction) {
 }
 ```
 
+--
+
 - `@title` and `@description` give information about the function.
 - `@param` specifies descriptions of the arguments of the function.
 - `@export` says that the function is not meant to be internal (more later).
 
 ---
 
-# Unit tests and test files
+# Testing and test files
 
-- These are generally kept under the `tests` subdirectory.
+## Types of tests
+
+- Checking of inputs
+  - Stop if inputs aren't as expected; facilitates user-safety.
+  - May use conditionals, `stopifnot`, or the `asserthat` package.
+- Unit tests
+  - Does a small function give the right results in a specific case?
+  - Written for each function, covering _atomic_ level functionality.
+- Integration tests
+  - To check that larger multi-function tasks are working properly.
+- Regression tests
+  - Compare output to saved results for long-term consistency.
+
+--
+
+## Organizing tests
+
 - The [`testthat` package]() is a popular framework for unit testing.
   - In this case, a file `tests/testthat.R` runs all the unit tests.
   - Individual unit tests are kept in `tests/testthat/example_test.R`
-- A simple unit test:
-```{r comment='#'}
-library(testthat)
-context("Testing a core function")
-set.seed(175298)
-test_that("What does this test do", {
-  # contents of test, use the expect_*() family of functions
-})
-```
+
+???
+
+- If you don't test your code, how do you know it works?
+- If you test your code, save and automate those tests.
+- Check the input to each function.
+- Write unit tests for each function.
+- Write some larger regression tests.
+- Turn bugs into tests.
 
 ---
 
@@ -313,10 +332,19 @@ test_that("What does this test do", {
     with explanations of package functionality.
   - These are a great resource for providing long-form documentation of the
     functionality of your package.
+
+--
+
 - The `pkgdown` package provides utilities to generate reference websites.
   - This process directly uses the `roxygen2`-style documentation.
   - It's simple to do, requiring only a call to `pkgdown::build_site()`.
+
+--
+
 - Check out: https://pkgdown.r-lib.org/ for its documetation.
+
+--
+
 - The websites can easily be customized via `_pkgdown.yml`.
 
 ---
@@ -325,16 +353,28 @@ test_that("What does this test do", {
 
 - Continuous integration services are designed to ensure that software can be
   built and tested with each incremental change.
+
+--
+
 - Travis-CI is one of several popular continuous integration services.
   - Others include AppVeyor and CircleCI.
   - Travis allows free builds on Linux systems.
   - AppVeyor allows free builds on Windows systems.
+
+--
+
 - For R packages, a standard practice is to set up builds on both Travis-CI and
   Appveyor, allowing Linux and Windows builds to be continuously monitored.
   - Travis-CI builds are customized through `.travis.yml`.
   - AppVeyor builds are customized through `appveyor.yml`.
+
+--
+
 - The checking process runs `R CMD Check`, which includes unit testing, on a
   freshly provisioned system.
+
+--
+
 - On both services, caching is helpful to avoid very long build/check times.
 
 ---
@@ -357,6 +397,8 @@ use_mit_license("My Name")
 use_readme_md()
 use_test("my-test")
 ```
+
+--
 
 - Let's browse https://usethis.r-lib.org/reference/index.html
 - For more, consider Hadley's book _R packages_: http://r-pkgs.had.co.nz/
